@@ -9,7 +9,6 @@ import { AlphaVantageService } from '../alpha-vantage.service';
 export class DashboardComponent implements OnInit {
 
   public currencies = ['CAD', 'JPY', 'EUR'];
-
   constructor() { }
 
   ngOnInit() {

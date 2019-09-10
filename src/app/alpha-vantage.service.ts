@@ -9,6 +9,7 @@ const CACHE_SIZE = 3;
   providedIn: 'root'
 })
 export class AlphaVantageService {
+  public rates:[];
   private cache$ : Observable<RealtimeCurrencyExchangeRate>;
   constructor(private httpClient: HttpClient) {}
 
@@ -32,7 +33,7 @@ export class AlphaVantageService {
      
   }
 //Add items to the array for caching all 3
-  public getCachedRates(currency: string){
+  public getCachedRate(currency: string){
     if(!this.cache$){
       console.log(currency);
       this.cache$ = this.get(currency).pipe(shareReplay(CACHE_SIZE));
@@ -40,47 +41,33 @@ export class AlphaVantageService {
     return this.cache$;
   }
 
- 
-
-  
-  /*Original*/
-  // public get(currency: string): Observable<RealtimeCurrencyExchangeRate> {
-  //   return this.httpClient.get<RealtimeCurrencyExchangeRate>(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=${currency}&apikey=YTQ55M6DYDOMLOCW`); 
-  // }
-
-
- /*Try 1 */
-  //private readonly refreshToken$ = new BehaviourSubject(undefined);
-  // public get(currency: string): Observable<RealtimeCurrencyExchangeRate> {
-  //    return this.refreshToken$.pipe(
-  //    switchMap(()=>this.httpClient.get<RealtimeCurrencyExchangeRate>(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=${currency}&apikey=YTQ55M6DYDOMLOCW`)));
+  public responseCache = new Map();
+  public getCachedList(currency:string): Observable<any> {
+    console.log("From the cachedList Method:",currency);
+    const ratesFromCache = this.responseCache.get(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=${currency}&apikey=YTQ55M6DYDOMLOCW`);
+    if (ratesFromCache) {
       
-  // }
-
-  
-  
-  /*Try 2 */
-  // private readonly autoRefresh$ =timer(10000).pipe(startWith(0));
-
-  // private readonly refreshToken$ = new BehaviourSubject(undefined);
-
-  // get _refreshToken$(){
-  //   return this.refreshToken$;
-  // }
-
-  // public get(currency: string): Observable<RealtimeCurrencyExchangeRate> {
-  //    return combineLatest(this.refreshToken$,this.autoRefresh$).pipe(
-  //    switchMap(()=>this.httpClient.get<RealtimeCurrencyExchangeRate>(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=${currency}&apikey=YTQ55M6DYDOMLOCW`)));
-      
-  // }
-
-
-
+      return of(ratesFromCache);
+    }
+    const response=  this.httpClient.get<any>(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=${currency}&apikey=YTQ55M6DYDOMLOCW`)
+                          .pipe(
+                              tap(
+                                rates => this.responseCache.set(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=${currency}&apikey=YTQ55M6DYDOMLOCW`, rates)                         
+                                )
+                          );
+    return response;
+  }
 
 }
 
 export interface RealtimeCurrencyExchangeRate {
   "Realtime Currency Exchange Rate": RealtimeCurrencyExchangeRateResult;
+}
+
+export interface CurrencyRate{
+  "CAD":string;
+  "JPY":string;
+  "EUR":string;
 }
 
 export class RealtimeCurrencyExchangeRateResult {

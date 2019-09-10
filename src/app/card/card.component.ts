@@ -13,21 +13,26 @@ export class CardComponent implements OnInit {
   public currency: string;
 
   public rate: string;
-
+  public rates:string[];
 
 //  interval:any;
 
-  constructor(private alphaVantageService: AlphaVantageService) { }
+  constructor(private alphaVantageService: AlphaVantageService) { 
+    //this.rates = null;
+  }
 /* Final -Edited*/
   ngOnInit() {
     this.alphaVantageService._refreshToken$.subscribe(()=>
     {
-      this.alphaVantageService.get(this.currency).subscribe(result => {
+      this.alphaVantageService.getCachedList(this.currency).subscribe(result => {
         this.rate = result['Realtime Currency Exchange Rate']['5. Exchange Rate'];
         console.log(result);
+        this.rates=JSON.parse(`"${this.currency}:${this.rate}"`);
+        console.log(this.rates);
       });
+
     });
-    
+    console.log("Im outside",this.rates);
   }
 
 /*Refreshing Attempt */
