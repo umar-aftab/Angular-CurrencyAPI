@@ -9,6 +9,11 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CardComponent } from './card/card.component';
 
+//Firebase
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import {environment} from '../environments/environment';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +25,9 @@ import { CardComponent } from './card/card.component';
     AppRoutingModule,
     ClarityModule,
     BrowserAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig,'fieldcap-test'),
+    AngularFirestoreModule.enablePersistence()
   ],
   providers: [],
   bootstrap: [AppComponent]

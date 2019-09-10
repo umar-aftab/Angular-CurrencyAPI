@@ -10,10 +10,9 @@ const CACHE_SIZE = 3;
 })
 export class AlphaVantageService {
   public rates:[];
-  private cache$ : Observable<RealtimeCurrencyExchangeRate>;
+ // private cache$ : Observable<RealtimeCurrencyExchangeRate>;
   constructor(private httpClient: HttpClient) {}
 
-  /*Try 5 - This one works Finally*/ 
   
   private readonly refreshToken$ =timer(0,60000);
   get _refreshToken$(){
@@ -33,13 +32,13 @@ export class AlphaVantageService {
      
   }
 //Add items to the array for caching all 3
-  public getCachedRate(currency: string){
-    if(!this.cache$){
-      console.log(currency);
-      this.cache$ = this.get(currency).pipe(shareReplay(CACHE_SIZE));
-    }
-    return this.cache$;
-  }
+  // public getCachedRate(currency: string){
+  //   if(!this.cache$){
+  //     console.log(currency);
+  //     this.cache$ = this.get(currency).pipe(shareReplay(CACHE_SIZE));
+  //   }
+  //   return this.cache$;
+  // }
 
   public responseCache = new Map();
   public getCachedList(currency:string): Observable<any> {
@@ -64,11 +63,7 @@ export interface RealtimeCurrencyExchangeRate {
   "Realtime Currency Exchange Rate": RealtimeCurrencyExchangeRateResult;
 }
 
-export interface CurrencyRate{
-  "CAD":string;
-  "JPY":string;
-  "EUR":string;
-}
+
 
 export class RealtimeCurrencyExchangeRateResult {
 '1. From_Currency Code': string;
